@@ -1,0 +1,155 @@
+<?php
+
+/**
+ * @file
+ * Google Maps Simple Text Field Formatter
+ *
+ * Provides a Google Maps link/map formatter for simple Text fields. Note that
+ * this is just a field formatter for Text fields, not a field. See README.txt
+ * for more information.
+ */
+
+/**
+ * Implements hook_field_formatter_info().
+ *
+ * Defines formatters for maps and map links.
+ */
+function simple_gmap_field_formatter_info() {
+  $formatters = array();
+
+  $formatters['simple_gmap_embed_map'] = array(
+    'label' => t('Embedded Google map, from one-line address'),
+    'field types' => array('text'),
+    'settings' => array(
+      'iframe_height' => 200,
+      'iframe_width' => 200,
+    ),
+  );
+
+  $formatters['simple_gmap_map_link'] = array(
+    'label' => t('Link to a Google map, from one-line address'),
+    'field types' => array('text'),
+    'settings' => array(
+      'link_text' => t('View Map'),
+    ),
+  );
+
+  $formatters['simple_gmap_embed_map_and_link'] = array(
+    'label' => t('Embedded Google map and map link, from one-line address'),
+    'field types' => array('text'),
+    'settings' => array(
+      'iframe_height' => 200,
+      'iframe_width' => 200,
+      'link_text' => t('View Larger Map'),
+    ),
+  );
+
+  return $formatters;
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ *
+ * Formats map/link fields.
+ */
+function simple_gmap_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  // Figure out what to display for each item we have here.
+  $embed = TRUE;
+  $link = TRUE;
+  switch ($display['type']) {
+    case 'simple_gmap_embed_map':
+      $link = FALSE;
+      break;
+    case 'simple_gmap_map_link':
+      $embed = FALSE;
+      break;
+  }
+
+  $height = $embed ? (int) $display['settings']['iframe_height'] : 1;
+  $width = $embed ? (int) $display['settings']['iframe_width'] : 1;
+  $link_text = $link ? check_plain($display['settings']['link_text']) : '';
+
+  foreach($items as $delta => $item) {
+    $url_value = urlencode(check_plain($item['value']));
+
+    $output = '';
+    if ($embed) {
+      $output .= '<iframe width="' . $width . '" height="' . $height . '" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?hl=en&amp;q=' . $url_value . '&amp;output=embed"></iframe>';
+    }
+    if ($link) {
+      $output .= '<p class="encore-gmap-link"><a href="http://maps.google.com/maps?q=' . $url_value . '" target="_blank">' . $link_text . '</a></p>';
+    }
+
+    $element[$delta] = array('#markup' => $output);
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function simple_gmap_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  $type = $display['type'];
+
+  $element = array();
+
+  if ($type == 'simple_gmap_embed_map' ||
+    $type == 'simple_gmap_embed_map_and_link') {
+
+    $element['iframe_width'] = array(
+      '#title' => t('Width of map'),
+      '#type' => 'textfield',
+      '#default_value' => $settings['iframe_width'],
+      '#required' => TRUE,
+    );
+
+    $element['iframe_height'] = array(
+      '#title' => t('Height of map'),
+      '#type' => 'textfield',
+      '#default_value' => $settings['iframe_height'],
+      '#required' => TRUE,
+    );
+  }
+
+  if ($type == 'simple_gmap_map_link' ||
+    $type == 'simple_gmap_embed_map_and_link') {
+
+    $element['link_text'] = array(
+      '#title' => t('Link text'),
+      '#type' => 'textfield',
+      '#default_value' => $settings['link_text'],
+      '#required' => TRUE,
+    );
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function simple_gmap_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $summary = '';
+
+  if ($display['type'] == 'simple_gmap_embed_map' ||
+    $display['type'] == 'simple_gmap_embed_map_and_link') {
+    $summary .= t('Map: @width x @height', array('@width' => $settings['iframe_width'], '@height' => $settings['iframe_height']));
+  }
+  if ($display['type'] == 'simple_gmap_map_link' ||
+    $display['type'] == 'simple_gmap_embed_map_and_link') {
+    if (strlen($summary)) {
+      $summary .= ', ';
+    }
+    $summary .= t('Link: @link_text', array('@link_text' => $settings['link_text']));
+  }
+
+  return $summary;
+}
