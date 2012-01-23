@@ -4,7 +4,7 @@ This module is a field formatter for Drupal 7 text fields. It allows you to
 enter a single-line address that Google Maps would recognize in a plain text
 field, such as:
    100 Madison Ave, New York, NY
-And then on your Display Fields screen (or in Views field setup), you can choose
+And then on your Manage Display screen (or in Views field setup), you can choose
 to display the field as an embedded iframe Google Map, a link to a Google Maps
 map, or both.
 
