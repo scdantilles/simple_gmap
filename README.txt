@@ -22,11 +22,12 @@ To install and use:
   map (or a link or both, depending on how you are using this field).
 - On the Manage Display screen, or when adding this field to Views, choose one
   of the three provided mapping formatters.
-- If desired, click the button to change the field display settings (iframe size
-  and/or map link text).
+- If desired, click the button to change the field display settings.
 
 Note: this is just a sandbox project so far... There are no field validation
 steps or theme overrides, and it just uses a regular Text field rather than
-defining its own field. The display settings let you choose the size of the map
-and the text for the map link, but that's pretty much it. Feel free to download
-and modify to fit your purposes!
+defining its own field. The display settings let you choose the size of the map,
+the text for the map link, the map zoom level (applies to both embedded and
+linked map), and whether to display information about the address in a bubble,
+but that's pretty much it. Feel free to download and modify to fit your
+purposes!

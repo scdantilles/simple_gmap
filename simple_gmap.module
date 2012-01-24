@@ -23,6 +23,8 @@ function simple_gmap_field_formatter_info() {
     'settings' => array(
       'iframe_height' => 200,
       'iframe_width' => 200,
+      'zoom_level' => 14,
+      'information_bubble' => 1,
     ),
   );
 
@@ -31,6 +33,8 @@ function simple_gmap_field_formatter_info() {
     'field types' => array('text'),
     'settings' => array(
       'link_text' => t('View Map'),
+      'zoom_level' => 14,
+      'information_bubble' => 1,
     ),
   );
 
@@ -41,6 +45,8 @@ function simple_gmap_field_formatter_info() {
       'iframe_height' => 200,
       'iframe_width' => 200,
       'link_text' => t('View Larger Map'),
+      'zoom_level' => 14,
+      'information_bubble' => 1,
     ),
   );
 
@@ -71,15 +77,24 @@ function simple_gmap_field_formatter_view($entity_type, $entity, $field, $instan
   $width = $embed ? (int) $display['settings']['iframe_width'] : 1;
   $link_text = $link ? check_plain($display['settings']['link_text']) : '';
 
+  // The information_bubble setting tells Google Maps what marker bubble to open
+  // by default. Google Maps always assigns the first marker A, the second B,
+  // third C, etc. Since this module will only ever have one marker, it will
+  // always be A. Therefore, if we set the iwloc parameter to A, it's telling
+  // Google Maps to open the marker bubble for A on load. An empty string means
+  // that the marker bubble shouldn't be open by default.
+  $information_bubble = $display['settings']['information_bubble'] ? 'A' : '';
+  $zoom_level = $display['settings']['zoom_level'];
+
   foreach($items as $delta => $item) {
     $url_value = urlencode(check_plain($item['value']));
 
     $output = '';
     if ($embed) {
-      $output .= '<iframe width="' . $width . '" height="' . $height . '" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?hl=en&amp;q=' . $url_value . '&amp;output=embed"></iframe>';
+      $output .= '<iframe width="' . $width . '" height="' . $height . '" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?hl=en&amp;q=' . $url_value . '&amp;iwloc=' . $information_bubble . '&amp;z=' . $zoom_level . '&amp;output=embed"></iframe>';
     }
     if ($link) {
-      $output .= '<p class="encore-gmap-link"><a href="http://maps.google.com/maps?q=' . $url_value . '" target="_blank">' . $link_text . '</a></p>';
+      $output .= '<p class="encore-gmap-link"><a href="http://maps.google.com/maps?q=' . $url_value . '&amp;iwloc=' . $information_bubble . '&amp;z=' . $zoom_level . '" target="_blank">' . $link_text . '</a></p>';
     }
 
     $element[$delta] = array('#markup' => $output);
@@ -127,6 +142,43 @@ function simple_gmap_field_formatter_settings_form($field, $instance, $view_mode
     );
   }
 
+  $element['zoom_level'] = array(
+    '#title' => t('Zoom level'),
+    '#type' => 'select',
+    '#description' => t('Choose a default zoom level for this map.'),
+    '#options' => array(
+      1 => t('1 - Minimum'),
+      2 => 2,
+      3 => 3,
+      4 => 4,
+      5 => 5,
+      6 => 6,
+      7 => 7,
+      8 => 8,
+      9 => 9,
+      10 => 10,
+      11 => 11,
+      12 => 12,
+      13 => 13,
+      14 => t('14 - Default'),
+      15 => 15,
+      16 => 16,
+      17 => 17,
+      18 => 18,
+      19 => 19,
+      20 => t('20 - Maximum'),
+    ),
+    '#default_value' => $settings['zoom_level'],
+    '#required' => TRUE,
+  );
+
+  $element['information_bubble'] = array(
+    '#title' => t('Show information bubble'),
+    '#type' => 'checkbox',
+    '#description' => t('If checked, the information bubble for the marker will be displayed when the map loads.'),
+    '#default_value' => $settings['information_bubble'],
+  );
+
   return $element;
 }
 
@@ -136,6 +188,8 @@ function simple_gmap_field_formatter_settings_form($field, $instance, $view_mode
 function simple_gmap_field_formatter_settings_summary($field, $instance, $view_mode) {
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
+
+  $information_bubble = $settings['information_bubble'] ? t('Yes') : t('No');
 
   $summary = '';
 
@@ -150,6 +204,9 @@ function simple_gmap_field_formatter_settings_summary($field, $instance, $view_m
     }
     $summary .= t('Link: @link_text', array('@link_text' => $settings['link_text']));
   }
+
+  $summary .= ', ' . t('Zoom Level: @zoom_level', array('@zoom_level' => $settings['zoom_level']));
+  $summary .= ', ' . t('Information Bubble: @information_bubble', array('@information_bubble' => $information_bubble));
 
   return $summary;
 }
