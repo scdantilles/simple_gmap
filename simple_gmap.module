@@ -84,7 +84,7 @@ function simple_gmap_field_formatter_view($entity_type, $entity, $field, $instan
   // Google Maps to open the marker bubble for A on load. An empty string means
   // that the marker bubble shouldn't be open by default.
   $information_bubble = $display['settings']['information_bubble'] ? 'A' : '';
-  $zoom_level = $display['settings']['zoom_level'];
+  $zoom_level = (int) $display['settings']['zoom_level'];
 
   foreach($items as $delta => $item) {
     $url_value = urlencode(check_plain($item['value']));
@@ -119,14 +119,14 @@ function simple_gmap_field_formatter_settings_form($field, $instance, $view_mode
     $element['iframe_width'] = array(
       '#title' => t('Width of map'),
       '#type' => 'textfield',
-      '#default_value' => $settings['iframe_width'],
+      '#default_value' => (int) $settings['iframe_width'],
       '#required' => TRUE,
     );
 
     $element['iframe_height'] = array(
       '#title' => t('Height of map'),
       '#type' => 'textfield',
-      '#default_value' => $settings['iframe_height'],
+      '#default_value' => (int) $settings['iframe_height'],
       '#required' => TRUE,
     );
   }
@@ -137,7 +137,7 @@ function simple_gmap_field_formatter_settings_form($field, $instance, $view_mode
     $element['link_text'] = array(
       '#title' => t('Link text'),
       '#type' => 'textfield',
-      '#default_value' => $settings['link_text'],
+      '#default_value' => check_plain($settings['link_text']),
       '#required' => TRUE,
     );
   }
@@ -168,7 +168,7 @@ function simple_gmap_field_formatter_settings_form($field, $instance, $view_mode
       19 => 19,
       20 => t('20 - Maximum'),
     ),
-    '#default_value' => $settings['zoom_level'],
+    '#default_value' => (int) $settings['zoom_level'],
     '#required' => TRUE,
   );
 
@@ -176,7 +176,7 @@ function simple_gmap_field_formatter_settings_form($field, $instance, $view_mode
     '#title' => t('Show information bubble'),
     '#type' => 'checkbox',
     '#description' => t('If checked, the information bubble for the marker will be displayed when the map loads.'),
-    '#default_value' => $settings['information_bubble'],
+    '#default_value' => (int) $settings['information_bubble'],
   );
 
   return $element;
