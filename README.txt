@@ -11,7 +11,7 @@ map, or both; with or without the original address text.
 
 No Google Maps API, JavaScript downloads, etc. are required. This just uses
 Google Maps' iframe embedding capability to embed a map at a given address that
-Google Maps can recognize, or to make a link to Google Maps.
+Google Maps can recognize, or to make a link to Google Map.
 
 To install and use:
 - Upload/unzip to your Drupal 7 sites/all/modules directory (or
