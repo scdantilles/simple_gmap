@@ -1,4 +1,4 @@
-name = Google Maps Simple Text Field Formatter
+name = Simple Google Maps
 description = Provides a Google Maps link/map formatter for simple Text fields
 core = 7.x
 
