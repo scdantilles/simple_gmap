@@ -31,9 +31,11 @@ if ($include_map) {
 <?php
 }
 if ($include_static_map) {
+  $static_w = (int) $width;
+  $static_h = (int) $height;
 ?>
 <div class="simple-gmap-static-map">
-  <img src="http://maps.googleapis.com/maps/api/staticmap?size=<?php print $width; ?>x<?php print $height; ?>&amp;zoom=<?php print $zoom; ?>&amp;language=<?php print $langcode; ?>&amp;maptype=<?php print $static_map_type; ?>&amp;markers=color:red|<?php print $url_suffix; ?>&amp;sensor=false" />
+  <img src="http://maps.googleapis.com/maps/api/staticmap?size=<?php print $static_w; ?>x<?php print $static_h; ?>&amp;zoom=<?php print $zoom; ?>&amp;language=<?php print $langcode; ?>&amp;maptype=<?php print $static_map_type; ?>&amp;markers=color:red|<?php print $url_suffix; ?>&amp;sensor=false" />
 </div>
 <?php
 }
