@@ -25,6 +25,14 @@
  *
  * @ingroup themeable
  */
+$detect = mobile_detect_get_object();
+$is_mobile = $detect->isMobile();
+if ($is_mobile) {
+  $include_map = false;
+  $include_static_map = false;
+  $include_link = true;
+  $link_text = "Ouvrir dans Google Map";
+}
 if ($include_map) {
 ?>
 <iframe width="<?php print $width; ?>" height="<?php print $height; ?>" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?hl=<?php print $langcode; ?>&amp;q=<?php print $url_suffix; ?>&amp;iwloc=<?php print ($information_bubble ? 'A': 'near'); ?>&amp;z=<?php print $zoom; ?>&amp;t=<?php print $map_type; ?>&amp;output=embed"></iframe>
